@@ -39,11 +39,7 @@ class ClinicController extends Controller
      */
     public function store(ClinicRequest $request)
     {
-        dd($request->all());
         try {
-            // $start_time = Carbon::createFromFormat('g:i A',$request->appointment_start_time)->toTimeString();
-            // $end_time = Carbon::createFromFormat('g:i A',$request->appointment_end_time)->toTimeString();
-
             DB::beginTransaction();
             $clinic = new Clinic();
             $clinic->name = $request->name;
@@ -105,6 +101,17 @@ class ClinicController extends Controller
             $clinic->contact_no = $request->contact_no;
             $clinic->address =  $request->address;
             $clinic->save();
+
+            foreach($request->days as $item){
+                $openHour = OpenHour::where('day_index','=', $item['day_index'])->where('clinic_id','=',$clinic->id)->first();
+                $openHour->day = $item['day'];
+                $openHour->day_index = $item['day_index'];
+                $openHour->is_open = $item['is_open'];
+                $openHour->open_time = $item['is_open'] == 1 ? $item['open_time'] : null;
+                $openHour->close_time = $item['is_open'] == 1 ?  $item['close_time'] : null;
+                $openHour->clinic_id = $clinic->id;
+                $openHour->save();
+            }
 
             DB::commit();
             Flasher::addSuccess('Clinic updated successfully');

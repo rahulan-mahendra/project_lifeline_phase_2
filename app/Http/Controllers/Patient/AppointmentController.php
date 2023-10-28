@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Patient;
 
 use DB;
+use Carbon\Carbon;
 use App\Models\Clinic;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        $clinics = Clinic::with('alert')->where('is_hidden','!=',1)->get();
+        $clinics = Clinic::with('alert','openHours')->where('is_hidden','!=',1)->get();
         return view('patients.pages.appointments.index', compact('clinics'));
     }
 
@@ -35,13 +36,11 @@ class AppointmentController extends Controller
      */
     public function store(AppointmentRequest $request)
     {
+        // dd($request->all());
         try {
+            $appointment_time = Carbon::createFromFormat('g:i A',$request->appointment_time)->toTimeString();
 
-            $time_string = $request->appointment_time;
-            list($time, $abbr) = explode(" ",$time_string);
-            $appointment_time = $time.":00";
-
-            $last = Appointment::select('code')->latest()->first();
+            $last = Appointment::select('code')->orderBy('id', 'DESC')->first();
 
             if($last == null){
                 $code = 'APPT-'.(string)(1001) ;

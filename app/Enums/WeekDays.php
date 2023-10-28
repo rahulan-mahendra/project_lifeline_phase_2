@@ -32,7 +32,7 @@ enum WeekDays: int
     case wednesday = 3;
     case thursday = 4;
     case friday = 5;
-    case saturday = 0;
-    case sunday = 6;
+    case saturday = 6;
+    case sunday = 0;
 
 }

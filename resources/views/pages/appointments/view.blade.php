@@ -75,7 +75,7 @@
                                     <tr>
                                         <td><strong>Appointment Time</strong></td>
                                         <td><strong>:</strong></td>
-                                        <td>{{\Carbon\Carbon::createFromTimeString($appointment->appointment_time,'Australia/Melbourne')->format('g:i A')}}</td>
+                                        <td>{{\Carbon\Carbon::parse($appointment->appointment_time)->format('g:i A')}}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Notes</strong></td>

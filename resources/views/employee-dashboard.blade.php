@@ -132,7 +132,7 @@
                                     <td>{{$appointment->dob}}</td>
                                     <td>{{$appointment->phone_no}}</td>
                                     <td>{{$appointment->appointment_date}}</td>
-                                    <td>{{\Carbon\Carbon::createFromTimeString($appointment->appointment_time,'Australia/Melbourne')->format('g:i A')}}</td>
+                                    <td>{{\Carbon\Carbon::parse($appointment->appointment_time)->format('g:i A')}}</td>
                                     <td>
                                         @if ($appointment->status == 'Pending')
                                         <span class="badge badge-warning">{{$appointment->status}}</span>

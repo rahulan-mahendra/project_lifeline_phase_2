@@ -27,6 +27,10 @@
             background-color: #fff;
             opacity: 1;
         }
+        .form-control[disabled]{
+            background-color: #D3D3D3;
+            opacity: 1;
+        }
         .move-left {
             width: auto;
             box-shadow: none;
@@ -139,7 +143,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group row mb-1">
-                                            <label class="col-lg-4 col-md-4 col-form-label" for="appointment_date">Preferred Appointment Date <span class="text-danger">*</span></label>
+                                            <label class="col-lg-4 col-md-4 col-form-label" for="appointment_date">Preferred Appointment Date <span class="text-danger">* <div class="date_warn font-10"></div></span></label>
                                             <div class="col-lg-8">
                                                 <input type="text" class="form-control @error('appointment_date') is-invalid @enderror" id="appointment_date" name="appointment_date" placeholder="Select Appoinment Date">
                                                 @error('appointment_date')
@@ -256,8 +260,8 @@
         let clinic_end_time = "00:00";
 
         $( document ).ready(function(){
-            $("#appointment_time").prop("disabled",true);
-            $(".time_limit").html(`Choose a clinic.`)
+            clearForm();
+            disableAndReset();
         });
 
         $('#clinic').on('change', function (e) {
@@ -265,9 +269,11 @@
             var clinicSelected = this.value;
 
 
-            $("#appointment_time").prop("disabled",false);
-
             if($.trim(clinicSelected).length !== 0){
+                $('#appointment_date').val("");
+                $('#appointment_date').prop("disabled",false);
+
+
                 var clinics = {!! json_encode($clinics) !!};
 
                 var clinic = clinics.find(clinic => {
@@ -278,6 +284,55 @@
                     $('#alert-message').html(clinic.alert.message);
                     $('#alertModal').modal("show");
                 }
+
+                let closed_day_indexes = closedDays(clinic.open_hours);
+
+                $("#appointment_date").flatpickr({
+                    // defaultDate: currentDate,
+                    dateFormat: "Y-m-d",
+                    minDate: currentDate,
+                    disableMobile: "true",
+                    locale: {
+                        "firstDayOfWeek": 1 // start week on Monday
+                    },
+                    disable: [
+                        function(date){
+                            if (closed_day_indexes.includes(0)) {
+                                return date.getDay() === 0;
+                            }
+                        },
+                        function(date){
+                            if (closed_day_indexes.includes(1)) {
+                                return date.getDay() === 1;
+                            }
+                        },
+                        function(date){
+                            if (closed_day_indexes.includes(2)) {
+                                return date.getDay() === 2;
+                            }
+                        },
+                        function(date){
+                            if (closed_day_indexes.includes(3)) {
+                                return date.getDay() === 3;
+                            }
+                        },
+                        function(date){
+                            if (closed_day_indexes.includes(4)) {
+                                return date.getDay() === 4;
+                            }
+                        },
+                        function(date){
+                            if (closed_day_indexes.includes(5)) {
+                                return date.getDay() === 5;
+                            }
+                        },
+                        function(date){
+                            if (closed_day_indexes.includes(6)) {
+                                return date.getDay() === 6;
+                            }
+                        }
+                    ]
+                });
 
                 const breakpoint = ":";
 
@@ -309,8 +364,7 @@
                     dateFormat: "h:i K",
                 });
             } else {
-                $("#appointment_time").prop("disabled",true);
-                $(".time_limit").html(`Choose a clinic.`)
+                disableAndReset();
             }
         });
 
@@ -320,20 +374,20 @@
             maxDate: currentDate,
         });
 
-        $("#appointment_date").flatpickr({
-            // defaultDate: currentDate,
-            dateFormat: "Y-m-d",
-            minDate: currentDate,
-            disableMobile: "true"
-        });
+        // $("#appointment_date").flatpickr({
+        //     // defaultDate: currentDate,
+        //     dateFormat: "Y-m-d",
+        //     minDate: currentDate,
+        //     disableMobile: "true"
+        // });
 
-        $("#appointment_time").flatpickr({
-            enableTime: true,
-            noCalendar: true,
-            minTime: clinic_start_time,
-            maxTime: clinic_end_time,
-            dateFormat: "h:i K",
-        });
+        // $("#appointment_time").flatpickr({
+        //     enableTime: true,
+        //     noCalendar: true,
+        //     minTime: clinic_start_time,
+        //     maxTime: clinic_end_time,
+        //     dateFormat: "h:i K",
+        // });
 
         function clearForm(){
             $('#firstname').val("");
@@ -346,6 +400,24 @@
             $('#appointment_time').val("");
             $('#is_new_patient').val(" ").change();
             $('#notes').val("");
+        }
+
+        function disableAndReset(){
+            $('#appointment_date').val("");
+            $('#appointment_time').val("");
+            $('#appointment_date').prop("disabled",true);
+            $("#appointment_time").prop("disabled",true);
+            $(".date_warn").html(`Choose a clinic.`)
+            $(".time_limit").html(`Choose a date.`)
+        }
+
+        function enableAndPreSet(){
+            $('#appointment_date').val("");
+            $('#appointment_time').val("");
+            $('#appointment_date').prop("disabled",false);
+            $("#appointment_time").prop("disabled",false);
+            $(".date_warn").html(`Choose a clinic.`)
+            $(".time_limit").html(`Choose a date.`)
         }
 
         function timeFormatter(time_arr){
@@ -362,6 +434,14 @@
             if (hour == 0){
                 return `"${time_arr[0]}:${time_arr[1]} PM"`;
             }
+        }
+
+        function closedDays(days_arr){
+            let all_days_arr = days_arr;
+            let closed_days_arr = all_days_arr.filter((item)=> (item.is_open === 0 ? true : false));
+            let closed_day_indexes = closed_days_arr.map(item => item.day_index);
+
+            return closed_day_indexes;
         }
     </script>
     <!-- End js -->

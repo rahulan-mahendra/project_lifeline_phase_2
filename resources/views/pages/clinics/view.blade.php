@@ -83,8 +83,20 @@
                                                 <span class="badge badge-danger">No</span>
                                             @endif
                                         </td>
-                                        <td>{{Carbon\Carbon::parse($item['open_time'])->isoFormat('h:mm A')}}</td>
-                                        <td>{{Carbon\Carbon::parse($item['close_time'])->isoFormat('h:mm A')}}</td>
+                                        <td>
+                                            @if ($item['is_open'] == 1)
+                                            {{Carbon\Carbon::parse($item['open_time'])->isoFormat('h:mm A')}}
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($item['is_open'] == 1)
+                                            {{Carbon\Carbon::parse($item['close_time'])->isoFormat('h:mm A')}}
+                                            @else
+                                            -
+                                            @endif
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>

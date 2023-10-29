@@ -33,7 +33,7 @@ class AppointmentRequest extends FormRequest
             'appointment_date' => 'required|date|date_format:Y-m-d',
             'appointment_time' => [
                 'required',
-                 new ClinicAppointmentTimeRule($request->clinic)
+                 new ClinicAppointmentTimeRule($request->clinic, $request->day_index)
             ],
             'is_new_patient' => 'required|in:0,1'
         ];

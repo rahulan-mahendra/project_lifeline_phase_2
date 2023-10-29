@@ -36,7 +36,6 @@ class AppointmentController extends Controller
      */
     public function store(AppointmentRequest $request)
     {
-        // dd($request->all());
         try {
             $appointment_time = Carbon::createFromFormat('g:i A',$request->appointment_time)->toTimeString();
 

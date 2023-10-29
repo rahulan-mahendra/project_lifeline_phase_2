@@ -153,6 +153,7 @@
                                                 @enderror
                                             </div>
                                         </div>
+                                        <input type="hidden" id="day_index" name="day_index">
                                         <div class="form-group row mb-1">
                                             <label class="col-lg-4 col-md-4 col-form-label" for="appointment_time"> Preferred Appointment Time <span class="text-danger">* <div class="time_limit font-10"></div></span></label>
                                             <div class="col-lg-8">
@@ -220,7 +221,7 @@
                     <div id="alert-message"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Understood</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
                 </div>
             </div>
         </div>
@@ -272,6 +273,8 @@
             if($.trim(clinicSelected).length !== 0){
                 $('#appointment_date').val("");
                 $('#appointment_date').prop("disabled",false);
+                $('#appointment_time').val("");
+                $("#appointment_time").prop("disabled",true);
 
 
                 var clinics = {!! json_encode($clinics) !!};
@@ -331,38 +334,50 @@
                                 return date.getDay() === 6;
                             }
                         }
-                    ]
+                    ],
+                    onChange: function(selectedDates, dateStr, instance) {
+                        let seletected_day_index = selectedDates[0].getDay();
+                        prepareTimePicker(seletected_day_index);
+                        $('#day_index').val(seletected_day_index);
+                    },
                 });
 
-                const breakpoint = ":";
-
-                let start_time = clinic.appointment_start_time;
-                let start_time_arr = start_time.split(breakpoint);
-                clinic_start_time = `"${start_time_arr[0]}:${start_time_arr[1]}"`;
-
-                end_time = clinic.appointment_end_time;
-                end_time_arr = end_time.split(breakpoint);
-                clinic_end_time = `"${end_time_arr[0]}:${end_time_arr[1]}"`;
+                function prepareTimePicker(day_index){
+                    $("#appointment_time").prop("disabled",false);
 
 
-                let start_limit = timeFormatter(start_time_arr);
-                let end_limit = timeFormatter(end_time_arr);
+                    let openHours = clinic.open_hours;
+                    let selected_day = openHours.filter((item)=> (item.day_index === day_index ? true : false));
 
-                $(".time_limit").html(`Choose a time between ${start_limit} - ${end_limit}`)
+                    const breakpoint = ":";
+
+                    let start_time = selected_day[0].open_time;
+                    let start_time_arr = start_time.split(breakpoint);
+                    clinic_start_time = `"${start_time_arr[0]}:${start_time_arr[1]}"`;
+
+                    end_time =  selected_day[0].close_time;
+                    end_time_arr = end_time.split(breakpoint);
+                    clinic_end_time = `"${end_time_arr[0]}:${end_time_arr[1]}"`;
 
 
-                $("#appointment_time").val(clinic_start_time);
+                    let start_limit = timeFormatter(start_time_arr);
+                    let end_limit = timeFormatter(end_time_arr);
 
-                $("#appointment_time").flatpickr({
-                    defaultHour: start_time_arr[0],
-                    defaultMinute: start_time_arr[1],
-                    enableTime: true,
-                    noCalendar: true,
-                    minTime: clinic_start_time,
-                    maxTime: clinic_end_time,
-                    minuteIncrement: 10,
-                    dateFormat: "h:i K",
-                });
+                    $(".time_limit").html(`Choose a time between ${start_limit} - ${end_limit}`);
+
+                    $("#appointment_time").val(clinic_start_time);
+
+                    $("#appointment_time").flatpickr({
+                        defaultHour: start_time_arr[0],
+                        defaultMinute: start_time_arr[1],
+                        enableTime: true,
+                        noCalendar: true,
+                        minTime: clinic_start_time,
+                        maxTime: clinic_end_time,
+                        minuteIncrement: 10,
+                        dateFormat: "h:i K",
+                    });
+                }
             } else {
                 disableAndReset();
             }
@@ -372,22 +387,8 @@
             // defaultDate: currentDate,
             dateFormat: "Y-m-d",
             maxDate: currentDate,
+            disableMobile: "false"
         });
-
-        // $("#appointment_date").flatpickr({
-        //     // defaultDate: currentDate,
-        //     dateFormat: "Y-m-d",
-        //     minDate: currentDate,
-        //     disableMobile: "true"
-        // });
-
-        // $("#appointment_time").flatpickr({
-        //     enableTime: true,
-        //     noCalendar: true,
-        //     minTime: clinic_start_time,
-        //     maxTime: clinic_end_time,
-        //     dateFormat: "h:i K",
-        // });
 
         function clearForm(){
             $('#firstname').val("");

@@ -46,6 +46,10 @@
         {
             border: 1px solid #d9534f;
         }
+        #alert-message{
+            width: 100%;
+            word-wrap: break-word;
+        }
     </style>
     <!-- End css -->
 </head>
@@ -153,7 +157,6 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <input type="hidden" id="day_index" name="day_index">
                                         <div class="form-group row mb-1">
                                             <label class="col-lg-4 col-md-4 col-form-label" for="appointment_time"> Preferred Appointment Time <span class="text-danger">* <div class="time_limit font-10"></div></span></label>
                                             <div class="col-lg-8">
@@ -387,7 +390,7 @@
             // defaultDate: currentDate,
             dateFormat: "Y-m-d",
             maxDate: currentDate,
-            disableMobile: "false"
+            disableMobile: "true"
         });
 
         function clearForm(){

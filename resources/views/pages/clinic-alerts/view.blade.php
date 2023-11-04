@@ -3,6 +3,14 @@
 @push('css')
 <!-- Sweet Alert css -->
 <link href="{{asset('admin/assets/plugins/sweet-alert2/sweetalert2.min.css')}}" rel="stylesheet" type="text/css">
+<style>
+    #alert-message {
+        width: 100;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-all;
+    }
+</style>
 @endpush
 
 @section('content')
@@ -43,7 +51,7 @@
                                     <tr>
                                         <td><strong>Alert Message</strong></td>
                                         <td><strong>:</strong></td>
-                                        <td>{{$clinicAlert->message}}</td>
+                                        <td id="alert-message">{{$clinicAlert->message}}</td>
                                     </tr>
                                 </table>
                             </div>

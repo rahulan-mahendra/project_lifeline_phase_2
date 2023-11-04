@@ -47,17 +47,17 @@
                         <table id="default-datatable" class="table table-bordered">
                             <thead>
                             <tr>
-                                <th>Clinic</th>
-                                <th>Alert Message</th>
-                                <th>Actions</th>
+                                <th >Clinic</th>
+                                <th >Alert Message</th>
+                                <th >Actions</th>
                             </tr>
                             </thead>
                             <tbody>
                                 @foreach ($data as $clinic_alert)
                                 <tr>
-                                    <td>{{$clinic_alert->clinic->name}}</td>
-                                    <td>{{$clinic_alert->message}}</td>
-                                    <td class="d-flex">
+                                    <td >{{$clinic_alert->clinic->name}}</td>
+                                    <td  class="message-data">{{$clinic_alert->message}}</td>
+                                    <td  >
                                         @can('can-view-clinic-alert')
                                         <a class="btn btn-success-rgba me-2" href="{{route('clinic-alerts.show',$clinic_alert->id)}}"><i class="fa fa-eye"></i></a>
                                         @endcan
